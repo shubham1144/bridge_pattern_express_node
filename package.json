@@ -1,0 +1,21 @@
+{
+  "name": "bridge-pattern-standard",
+  "version": "1.0.0",
+  "description": "a standard cli interface to reduce the efforts required for development during the project WAD and introduce a standard into the WAD platform",
+  "main": "app.js",
+  "preferGlobal": true,
+  "bin": "./app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "standardize",
+    "simplicity"
+  ],
+  "author": "shubham chodankar",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^2.11.0",
+    "inquirer": "^3.3.0"
+  }
+}
