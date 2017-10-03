@@ -15,7 +15,9 @@
   "author": "shubham chodankar",
   "license": "ISC",
   "dependencies": {
+    "async": "^2.5.0",
     "commander": "^2.11.0",
+    "fs": "0.0.1-security",
     "inquirer": "^3.3.0"
   }
 }
