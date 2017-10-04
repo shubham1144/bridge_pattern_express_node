@@ -11,22 +11,16 @@ var service_template = require('./templates/service-template');
 var dao = require('./dao/dao');
 var BottomBar = require('inquirer/lib/ui/bottom-bar');
 var section_choices = null;
-
 var loader = [
     '/ Fetching',
     '| Fetching',
     '\\ Fetching',
     '- Fetching'
-];
-var i = 4;
-var ui = new BottomBar({bottomBar: loader[i % 4]});
+], i = 4, ui = new BottomBar({bottomBar: loader[i % 4]});
 
 setInterval(function () {
     if(!section_choices) ui.updateBottomBar(loader[i++ % 4]);
-}, 300);
-
-
-
+}, 50);
 
 const questions_is_section = [
     {
@@ -40,25 +34,16 @@ const questions_is_section = [
         message : 'provide section description..minimum 20 words'
     }
     ,{
-        type : 'input',
+        type: 'confirm',
         name : 'restricted_access',
         message : 'Does the section have data access restriction?yes/no'
     }
 ],question_is_usecase = [
     {
-        type : 'input',
+        type : 'confirm',
         name : 'crud',
-        message : 'Do you want to create CRUD routes for the Usecase?yes/no'
-    },
-    {
-        type : 'input',
-        name : 'common',
-        message : 'Will the \'CRUD interfaces\' be common..i.e used between multiple usecases or across various sections?yes/no'
-    },
-    {
-        type : 'input',
-        name : 'swagger',
-        message : 'Do you wish to generate Swagger Documentation for the CRUD routes?yes/no'
+        default : 'yes',
+        message : 'Do you want to create basic CRUD functions for the bridge standard files?Y'
     }],directories = {
     CONTROLLER : { name : 'controllers', suffix : '-controller.js'},
     ROUTE :  { name : 'routes', suffix : '-route.js'},
@@ -80,7 +65,7 @@ function generateUsecaseFile(directory, usecase, details, callback){
 
         //Step 1 : Generate the file as required and populate the contents of the file based on the directory
         fs.writeFile(process.cwd() + '/' + directories[directory].name + '/' + usecase + directories[directory]['suffix'],
-
+            (details && !details.crud)? "":
             (directory === 'CONTROLLER') ? controller_template.template(usecase) :
             (directory === 'SERVICE'? service_template.template(usecase, details.description) :
             (directory === 'ROUTE')? route_template.template(usecase) :
@@ -136,17 +121,34 @@ program
 
                         if(answers.section_option[0]=== 'Section unavailable'){
                             prompt(questions_is_section).then(section_answers => {
-                                //TODO : Add a new section in the system DB and recontinue from start
+
+                                // console.log("The section to be added data received is : ", JSON.stringify(section_answers));
+                                dao.create({
+                                    name: section_answers.section_name,
+                                    description: section_answers.section_description,
+                                    active : true,
+                                    restricted_access : section_answers.restricted_access
+                                }, 'admin_section', function(err, data){
+                                    if(err){
+                                        console.log("Error occured due to :", err);
+                                        process.exit();
+                                    }
+                                    console.log("Section has been added in the system");
+                                    //TODO : Restart the process
+                                    process.exit();
+                                });
+                                
                             })
                         }else{
                             //TODO : Create a file structure to support the naming convention being followed in WAD
                             prompt(question_is_usecase).then(phase_two_answers =>{
-
-                                //TODO : Generate the basic CRUD backbone for controller interface
+                            //TODO : Make sure we add the files being generated in the Section's directory
                                 async.waterfall([
                                     function generateControllerFile(cb){
 
-                                        generateUsecaseFile('CONTROLLER', answers.usecase, null, function(err, result){
+                                        generateUsecaseFile('CONTROLLER', answers.usecase, {
+                                            crud : phase_two_answers.crud
+                                        }, function(err, result){
                                             if(err) return cb(err);
                                             cb(null);
                                         })
@@ -154,7 +156,8 @@ program
                                     function generateServiceFile(cb){
 
                                         generateUsecaseFile('SERVICE', answers.usecase, {
-                                            description : answers.description
+                                            description : answers.description,
+                                            crud : phase_two_answers.crud
 
                                         }, function(err, result){
                                             if(err) return cb(err);
@@ -163,7 +166,9 @@ program
                                     },
                                     function generateRouteFile(cb){
 
-                                        generateUsecaseFile('ROUTE', answers.usecase, null, function(err, result){
+                                        generateUsecaseFile('ROUTE', answers.usecase, {
+                                            crud : phase_two_answers.crud
+                                        }, function(err, result){
                                             if(err) return cb(err);
                                             cb(null);
                                         })
@@ -182,4 +187,3 @@ program
     });
 
 program.parse(process.argv);
-

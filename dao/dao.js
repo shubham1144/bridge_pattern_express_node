@@ -22,4 +22,24 @@ dao.rawDbQuery = function (query, callback){
 
 //================================================================================================================================================================================
 
+/* Function to be used to create a object using the ORM */
+dao.create = function(data, model_name, callback){
+
+    models[model_name]
+        .create(data)
+        .then(function(result){
+            //Iam suspecting that, the callback is returning a promise and then handling the errors associated with callback returned.
+
+            return callback(null, result);
+
+        })
+        .catch(models.sequelize.DatabaseError, function(err){
+            //We need to catch only sequelize specific errors here
+            return callback(err);
+        });
+
+};
+
+//================================================================================================================================================================================
+
 module.exports = dao;
