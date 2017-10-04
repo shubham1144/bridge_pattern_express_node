@@ -1,6 +1,7 @@
-exports.template = function(name){
+exports.template = function(name, description){
 
-    return  "var dao = require('../dao/dao');\n" +
+    return  "/*" + description + "*/\n" +
+            "var dao = require('../dao/dao');\n" +
             "var models = require('../db/models');\n" +
             "var util = require('../helpers/util');\n" +
             "var logger = require('../helpers/logger');\n" +

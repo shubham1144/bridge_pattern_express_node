@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "numadic",
+    "password": "qwertyuiop123",
+    "database": "nu_core_master",
+    "host": "nu-core-master.cpbd1zfurzzm.ap-southeast-1.rds.amazonaws.com",
+    "dialect": "postgres",
+    "secret": "dccper",
+    "logging" : false,
+    "port": "5432"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}

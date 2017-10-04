@@ -8,28 +8,43 @@ const program = require('commander'),{prompt} = require('inquirer');
 var controller_template = require('./templates/controller-template');
 var route_template = require('./templates/route-template');
 var service_template = require('./templates/service-template');
+var dao = require('./dao/dao');
+var BottomBar = require('inquirer/lib/ui/bottom-bar');
+var section_choices = null;
 
-const questions = [
+var loader = [
+    '/ Fetching',
+    '| Fetching',
+    '\\ Fetching',
+    '- Fetching'
+];
+var i = 4;
+var ui = new BottomBar({bottomBar: loader[i % 4]});
+
+setInterval(function () {
+    if(!section_choices) ui.updateBottomBar(loader[i++ % 4]);
+}, 300);
+
+
+
+
+const questions_is_section = [
     {
         type : 'input',
-        name : 'usecase',
-        message : 'Enter usecase name...'
+        name : 'section_name',
+        message : 'Name of the section to be added'
     },
     {
         type : 'input',
-        name : 'description',
-        message : 'provide description..minimum 20 words'
-    },
-    {
-        type : 'input',
-        name : 'is_section',
-        message : 'Can the usecase exist as a \'section\' on its own and have multiple usecases within it?yes/no'
+        name : 'section_description',
+        message : 'provide section description..minimum 20 words'
     }
-],questions_is_section = [{
-    type : 'input',
-    name : 'restricted_access',
-    message : 'Does the section have data access restriction?yes/no'
-}],question_is_usecase = [
+    ,{
+        type : 'input',
+        name : 'restricted_access',
+        message : 'Does the section have data access restriction?yes/no'
+    }
+],question_is_usecase = [
     {
         type : 'input',
         name : 'crud',
@@ -56,7 +71,7 @@ const questions = [
  * @param usecase
  * @param callback
  */
-function generateUsecaseFile(directory, usecase, callback){
+function generateUsecaseFile(directory, usecase, details, callback){
 
     fs.exists(process.cwd() + '/'+ directories[directory].name +'/', (exists) => {
 
@@ -67,7 +82,7 @@ function generateUsecaseFile(directory, usecase, callback){
         fs.writeFile(process.cwd() + '/' + directories[directory].name + '/' + usecase + directories[directory]['suffix'],
 
             (directory === 'CONTROLLER') ? controller_template.template(usecase) :
-            (directory === 'SERVICE'? service_template.template(usecase) :
+            (directory === 'SERVICE'? service_template.template(usecase, details.description) :
             (directory === 'ROUTE')? route_template.template(usecase) :
             ""),
 
@@ -88,47 +103,82 @@ program
     .alias('addu')
     .description('Adds a usecase in the root folder structure, following the naming standards to maintain bridge design pattern, once generated the structure can be modified to suit the usecase')
     .action(() => {
-        prompt(questions)
-            .then(answers =>{
+            var query = "select json_agg(json_build_object('name', name)) as choices from admin_sections where active";
+            dao.rawDbQuery(query, function(err, data) {
+                ui.updateBottomBar('Hello!!!\n');
+                section_choices = data[0].choices;
+                section_choices.push({ name : 'Section unavailable'});
+                questions = [
+                    {
+                        type : 'input',
+                        name : 'usecase',
+                        message : 'Enter usecase name...'
+                    },
+                    {
+                        type : 'input',
+                        name : 'description',
+                        message : 'Provide description..minimum 20 words'
+                    },
+                    {
+                        type : 'checkbox',
+                        name : 'section_option',
+                        message : function(){
 
-                    if(answers.is_section.toLowerCase() === 'yes' || answers.is_section.toLowerCase() === 'y'){
-                        prompt(questions_is_section).then(phase_two_answers =>{
-                            //TODO : Create a Admin section and Generate a folder structure for the same
-                        })
-                    }else{
-                        //TODO : Create a file structure to support the naming convention being followed in WAD
-                        prompt(question_is_usecase).then(phase_two_answers =>{
+                            return  "Choose the section under which the usecase falls\n";
+                        },
+                        choices : section_choices,
+                        pageSize : 50
+                    }
+                ];
 
-                            //TODO : Generate the basic CRUD backbone for controller interface
-                            async.waterfall([
-                                  function generateControllerFile(cb){
+                prompt(questions)
+                    .then(answers =>{
 
-                                    generateUsecaseFile('CONTROLLER', answers.usecase, function(err, result){
-                                        if(err) return cb(err);
-                                        cb(null);
-                                    })
-                                },
-                                function generateServiceFile(cb){
+                        if(answers.section_option[0]=== 'Section unavailable'){
+                            prompt(questions_is_section).then(section_answers => {
+                                //TODO : Add a new section in the system DB and recontinue from start
+                            })
+                        }else{
+                            //TODO : Create a file structure to support the naming convention being followed in WAD
+                            prompt(question_is_usecase).then(phase_two_answers =>{
 
-                                    generateUsecaseFile('SERVICE', answers.usecase, function(err, result){
-                                        if(err) return cb(err);
-                                        cb(null);
-                                    })
-                                },
-                                function generateRouteFile(cb){
+                                //TODO : Generate the basic CRUD backbone for controller interface
+                                async.waterfall([
+                                    function generateControllerFile(cb){
 
-                                    generateUsecaseFile('ROUTE', answers.usecase, function(err, result){
-                                        if(err) return cb(err);
-                                        cb(null);
-                                    })
-                                }
-                            ], function(err, result){
+                                        generateUsecaseFile('CONTROLLER', answers.usecase, null, function(err, result){
+                                            if(err) return cb(err);
+                                            cb(null);
+                                        })
+                                    },
+                                    function generateServiceFile(cb){
+
+                                        generateUsecaseFile('SERVICE', answers.usecase, {
+                                            description : answers.description
+
+                                        }, function(err, result){
+                                            if(err) return cb(err);
+                                            cb(null);
+                                        })
+                                    },
+                                    function generateRouteFile(cb){
+
+                                        generateUsecaseFile('ROUTE', answers.usecase, null, function(err, result){
+                                            if(err) return cb(err);
+                                            cb(null);
+                                        })
+                                    }
+                                ], function(err, result){
                                     if(err) return console.error("Error occured due to : ", err);
                                     console.log("Usecase has been generated successfully!!!");
-                            });
-                        })
-                    }
-            })
+                                    process.exit();
+                                });
+                            })
+                        }
+
+                    })
+            });
+
     });
 
 program.parse(process.argv);
