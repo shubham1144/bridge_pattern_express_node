@@ -1,26 +1,22 @@
 #!/usr/bin/env node
 /*
     This file consists of the logic for the bridge design pattern standard
-    followed in Node.js Express application being developed under numadic platform
+    followed in Node.js Express application
 */
-var fs = require('fs'),async = require('async');
+let fs = require('fs'),async = require('async');
 const program = require('commander'),{prompt} = require('inquirer');
-var controller_template = require('./templates/controller-template');
-var route_template = require('./templates/route-template');
-var service_template = require('./templates/service-template');
-var dao = require('./dao/dao');
-var BottomBar = require('inquirer/lib/ui/bottom-bar');
-var section_choices = null;
-var loader = [
-    '/ Fetching',
-    '| Fetching',
-    '\\ Fetching',
-    '- Fetching'
-], i = 4, ui = new BottomBar({bottomBar: loader[i % 4]});
-
-setInterval(function () {
-    if(!section_choices) ui.updateBottomBar(loader[i++ % 4]);
-}, 50);
+let controller_template = require('./templates/controller-template');
+let route_template = require('./templates/route-template');
+let service_template = require('./templates/service-template');
+let dao = require('./dao/dao');
+let BottomBar = require('inquirer/lib/ui/bottom-bar');
+let section_choices = null;
+let loader = [
+    '/ Fetching data',
+    '| Fetching data',
+    '\\ Fetching data',
+    '- Fetching data'
+], i = 4, ui = null;
 
 const questions_is_section = [
     {
@@ -83,12 +79,18 @@ program
     .version('0.0.1')
     .description('Bridge Design Pattern - Standardizer\n\tKeep things as simple as possible');
 
+
 program
     .command('addusecase')
     .alias('addu')
     .description('Adds a usecase in the root folder structure, following the naming standards to maintain bridge design pattern, once generated the structure can be modified to suit the usecase')
     .action(() => {
-            var query = "select json_agg(json_build_object('name', name)) as choices from admin_sections where active";
+            //Sets the loader to wait till the section information is fetched
+            ui = new BottomBar({bottomBar: loader[i % 4]});
+            setInterval(function () {
+                if(!section_choices) ui.updateBottomBar(loader[i++ % 4]);
+            }, 50);
+            let query = "select json_agg(json_build_object('name', name)) as choices from admin_sections where active";
             dao.rawDbQuery(query, function(err, data) {
                 ui.updateBottomBar('Hello!!!\n');
                 section_choices = data[0].choices;
@@ -122,7 +124,6 @@ program
                         if(answers.section_option[0]=== 'Section unavailable'){
                             prompt(questions_is_section).then(section_answers => {
 
-                                // console.log("The section to be added data received is : ", JSON.stringify(section_answers));
                                 dao.create({
                                     name: section_answers.section_name,
                                     description: section_answers.section_description,
@@ -140,7 +141,7 @@ program
                                 
                             })
                         }else{
-                            //TODO : Create a file structure to support the naming convention being followed in WAD
+
                             prompt(question_is_usecase).then(phase_two_answers =>{
                             //TODO : Make sure we add the files being generated in the Section's directory
                                 async.waterfall([
