@@ -58,7 +58,6 @@ function generateUsecaseFile(directory, usecase, details, callback){
     fs.exists(process.cwd() + '/'+ directories[directory].name +'/', (exists) => {
 
         //synchronous wait to make sure the directory exists before we proceed with the file creation
-        console.log("The exists flag is : ", exists);
          if (!exists) fs.mkdirSync(process.cwd() + '/' + directories[directory].name + '/' );
 
         fs.exists(process.cwd() + '/'+ directories[directory].name +'/' + details.section.toLowerCase() + '/', (exists) => {
