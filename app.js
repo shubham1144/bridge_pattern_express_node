@@ -3,12 +3,13 @@
     This file consists of the logic for the bridge design pattern standard
     followed in Node.js Express application
 */
-let fs = require('fs'),async = require('async');
+let fs = require('fs'),async = require('async'), _ = require('lodash');
 const program = require('commander'),{prompt} = require('inquirer');
 let controller_template = require('./templates/controller-template');
 let route_template = require('./templates/route-template');
 let service_template = require('./templates/service-template');
 let dao = require('./dao/dao');
+let util = require('./helpers/util');
 let BottomBar = require('inquirer/lib/ui/bottom-bar');
 let section_choices = null;
 let loader = [
@@ -57,21 +58,28 @@ function generateUsecaseFile(directory, usecase, details, callback){
     fs.exists(process.cwd() + '/'+ directories[directory].name +'/', (exists) => {
 
         //synchronous wait to make sure the directory exists before we proceed with the file creation
-        if (!exists) fs.mkdirSync(process.cwd() + '/' + directories[directory].name + '/');
+        console.log("The exists flag is : ", exists);
+         if (!exists) fs.mkdirSync(process.cwd() + '/' + directories[directory].name + '/' );
 
-        //Step 1 : Generate the file as required and populate the contents of the file based on the directory
-        fs.writeFile(process.cwd() + '/' + directories[directory].name + '/' + usecase + directories[directory]['suffix'],
-            (details && !details.crud)? "":
-            (directory === 'CONTROLLER') ? controller_template.template(usecase) :
-            (directory === 'SERVICE'? service_template.template(usecase, details.description) :
-            (directory === 'ROUTE')? route_template.template(usecase) :
-            ""),
+        fs.exists(process.cwd() + '/'+ directories[directory].name +'/' + details.section.toLowerCase() + '/', (exists) => {
 
-            (err) => {
-                if (err) return callback(err);
-                callback(null);
-            });
+            if (!exists && directory!== 'SERVICE') fs.mkdirSync(process.cwd() + '/' + directories[directory].name + '/' + details.section.toLowerCase() + '/');
+            //Step 1 : Generate the file as required and populate the contents of the file based on the directory
+            fs.writeFile(
+                directory!== 'SERVICE'?process.cwd() + '/' + directories[directory].name + '/' + details.section.toLowerCase() + '/' + util.useCaseNamingStandard(usecase) + directories[directory]['suffix']
+                : process.cwd() + '/' + directories[directory].name + '/' + util.useCaseNamingStandard(usecase) + directories[directory]['suffix']
+                ,(details && !details.crud)? "":
+                (directory === 'CONTROLLER') ? controller_template.template(util.capitalizeTitleCase(usecase)) :
+                (directory === 'SERVICE'? service_template.template(util.capitalizeTitleCase(usecase), details.description) :
+                (directory === 'ROUTE')? route_template.template(util.capitalizeTitleCase(usecase), util.useCaseNamingStandard(usecase), details.section) :
+                ""),
 
+                (err) => {
+                    if (err) return callback(err);
+                    callback(null);
+                });
+
+        });
     });
 }
 
@@ -148,6 +156,7 @@ program
                                     function generateControllerFile(cb){
 
                                         generateUsecaseFile('CONTROLLER', answers.usecase, {
+                                            section : answers.section_option[0].toLowerCase(),
                                             crud : phase_two_answers.crud
                                         }, function(err, result){
                                             if(err) return cb(err);
@@ -157,6 +166,7 @@ program
                                     function generateServiceFile(cb){
 
                                         generateUsecaseFile('SERVICE', answers.usecase, {
+                                            section : answers.section_option[0].toLowerCase(),
                                             description : answers.description,
                                             crud : phase_two_answers.crud
 
@@ -168,6 +178,7 @@ program
                                     function generateRouteFile(cb){
 
                                         generateUsecaseFile('ROUTE', answers.usecase, {
+                                            section : answers.section_option[0].toLowerCase(),
                                             crud : phase_two_answers.crud
                                         }, function(err, result){
                                             if(err) return cb(err);
@@ -175,7 +186,7 @@ program
                                         })
                                     }
                                 ], function(err, result){
-                                    if(err) return console.error("Error occured due to : ", err);
+                                    if(err) console.error("Error occured due to : ", err);
                                     console.log("Usecase has been generated successfully!!!");
                                     process.exit();
                                 });

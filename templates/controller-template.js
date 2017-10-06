@@ -1,3 +1,5 @@
+var util = require('./../helpers/util');
+
 exports.template = function(name){
 
     return  "var models = require('../../db/models');\n" +

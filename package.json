@@ -19,6 +19,7 @@
     "commander": "^2.11.0",
     "fs": "0.0.1-security",
     "inquirer": "^3.3.0",
+    "lodash": "^4.17.4",
     "pg": "^6.1.0",
     "sequelize": "^3.30.4"
   }

@@ -1,8 +1,10 @@
-exports.template = function(name){
+var util = require('./../helpers/util');
+
+exports.template = function(name, controller_name, section){
 
     return  " var express = require('express');\n" +
             " var router = express.Router();\n" +
-            " var " + name + " = require('../controllers/" + name + "-controller');\n\n" +
+            " var " + name.toLowerCase() + " = require('../../controllers/" + section + '/' + controller_name + "-controller');\n\n" +
             " /**\n" +
             "  * @swagger\n" +
             "  * definition:\n" +
@@ -14,7 +16,7 @@ exports.template = function(name){
             " \n\n" +
             " /**\n" +
             "  * @swagger\n" +
-            "  * /" + name + ":\n" +
+            "  * /" + name.toLowerCase() + ":\n" +
             "  *   get:\n" +
             "  *     tags:\n" +
             "  *       - " + name + " APIs\n" +
@@ -49,11 +51,11 @@ exports.template = function(name){
             "  *         description: Internal Server Error\n" +
             "  *\n" +
             "  */\n" +
-            " router.get('/', " + name + ".fetchAll" + name + ");\n" +
+            " router.get('/', " +  name.toLowerCase() + ".fetchAll" +  name + ");\n" +
             " \n" +
             " /**\n" +
             " * @swagger\n" +
-            " * /" + name + ":\n" +
+            " * /" + name.toLowerCase() + ":\n" +
             " *   post:\n" +
             " *     tags:\n" +
             " *       - " + name + " APIs\n" +
@@ -81,11 +83,11 @@ exports.template = function(name){
             " *         description: Internal Server Error\n" +
             " *\n" +
             " */\n" +
-            " router.post('/', " + name + ".add" + name+ ");\n" +
+            " router.post('/', " + name.toLowerCase() + ".add" + name+ ");\n" +
             " \n" +
             " /**\n" +
             "  * @swagger\n" +
-            "  * /" + name + ":\n" +
+            "  * /" + name.toLowerCase() + ":\n" +
             "  *   put:\n" +
             "  *     tags:\n" +
             "  *       - " + name + " APIs\n" +
@@ -113,7 +115,7 @@ exports.template = function(name){
             "  *         description: Internal Server Error\n" +
             "  *\n" +
             "  */\n" +
-            " router.put('/', " + name + ".update" + name + ");\n" +
+            " router.put('/', " + name.toLowerCase() + ".update" + name + ");\n" +
             " \nmodule.exports = router;";
     
 };

@@ -1,3 +1,5 @@
+var util = require('./../helpers/util');
+
 exports.template = function(name, description){
 
     return  "/*" + description + "*/\n" +
@@ -7,7 +9,7 @@ exports.template = function(name, description){
             "var logger = require('../helpers/logger');\n" +
             "var async = require('async');\n" +
             "var _ = require('lodash');\n\n" +
-            "exports.fetchAll" + name + " = function(limit, page, q, callback){callback(null, 'Under development')};\n" +
+            "exports.fetchAll" + name + " = function(limit, page, q, cfilter, callback){callback(null, 'Under development')};\n" +
             "exports.fetch" + name + " = function(id, callback){callback(null, 'Under development')};\n" +
             "exports.add" + name + " = function(data, callback){callback(null, 'Under development')};\n" +
             "exports.update" + name + " = function(id, updated_data, callback){callback(null, 'Under development')};";
