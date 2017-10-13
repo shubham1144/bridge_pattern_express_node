@@ -19,7 +19,7 @@ let loader = [
     '- Fetching data'
 ], i = 4, ui = null;
 
-const questions_is_section = [
+const   questions_is_section = [
     {
         type : 'input',
         name : 'section_name',
@@ -35,17 +35,18 @@ const questions_is_section = [
         name : 'restricted_access',
         message : 'Does the section have data access restriction?yes/no'
     }
-],question_is_usecase = [
-    {
+],
+        question_is_usecase = [{
         type : 'confirm',
         name : 'crud',
         default : 'yes',
         message : 'Do you want to create basic CRUD functions for the bridge standard files?Y'
-    }],directories = {
-    CONTROLLER : { name : 'controllers', suffix : '-controller.js'},
-    ROUTE :  { name : 'routes', suffix : '-route.js'},
-    SERVICE : { name : 'services', suffix : '-service.js'}
-};
+    }],
+        directories = {
+            CONTROLLER : { name : 'controllers', suffix : '-controller.js'},
+            ROUTE :  { name : 'routes', suffix : '-route.js'},
+            SERVICE : { name : 'services', suffix : '-service.js'}
+        };
 
 /**
  * Function to be used to make sure that we are able to generate files as per the bridge design pattern
@@ -86,7 +87,10 @@ program
     .version('0.0.1')
     .description('Bridge Design Pattern - Standardizer\n\tKeep things as simple as possible');
 
-
+/*
+    * Command 1 : addusecase
+    * description : Allows to add a standardized folder structure in the system
+*/
 program
     .command('addusecase')
     .alias('addu')
@@ -197,4 +201,29 @@ program
 
     });
 
+/*
+     * Command 1 : addusecase
+     * description : Allows to add a standardized folder structure in the system
+*/
+program
+    .command('addapiroute')
+    .alias('addaroute')
+    .description('Adds a admin api in the system and associates the same with multiple admin sections')
+    .action(() => {
+
+        var questions = [{
+            type : 'input',
+            name : 'path',
+            message : 'Provide path to be registerd in the system'
+        }];
+        prompt(questions)
+            .then(answers =>{
+
+                // console.log("The path to be added in the system is : ", JSON.stringify(answers));
+                if(_.includes(answers.path, '//')) return console.log("Invalid path format.Path cannot be registered");
+                console.log("Path has been registered in the system");
+                
+            })
+
+    });
 program.parse(process.argv);
