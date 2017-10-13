@@ -41,17 +41,43 @@ const   questions_is_section = [
         message : 'Does the section have data access restriction?yes/no'
     }
 ],
-        question_is_usecase = [{
-        type : 'confirm',
-        name : 'crud',
-        default : 'yes',
-        message : 'Do you want to create basic CRUD functions for the bridge standard files?Y'
-    }],
+        question_is_usecase = [
+            {
+                type : 'input',
+                name : 'path',
+                message : 'Provide path to be registerd in the system (for example : "/entities") for the usecase'
+            },
+            {
+                type : 'confirm',
+                name : 'api_path_register',
+                default : 'yes',
+                message : 'Do you want to register the path above as a api path?Y'
+            },
+            {
+                type : 'confirm',
+                name : 'crud',
+                default : 'yes',
+                message : 'Do you want to create basic CRUD functions for the bridge standard files?Y'
+        }],
         directories = {
             CONTROLLER : { name : 'controllers', suffix : '-controller.js'},
             ROUTE :  { name : 'routes', suffix : '-route.js'},
             SERVICE : { name : 'services', suffix : '-service.js'}
         };
+
+function registerApiPath(data, callback){
+
+    dao.create({
+        fk_section_id: data.section_option[0],
+        path: data.path,
+        fk_section_id_v1 : data.section_option,
+        active: true
+    }, 'admin_api', function(err){
+        if(err) return callback(err)
+        callback(null)
+    })
+
+};
 
 /**
  * Function to fetch data associated with a section
@@ -60,7 +86,7 @@ const   questions_is_section = [
  */
 function fetchSectionData(id_fetch, callback){
 
-    var values = id_fetch? "'name', name, 'value', id" : "'name', name";
+    var values = id_fetch? "'name', name, 'value', id" : "'name', name, 'id', id";
     //Sets the loader to wait till the section information is fetched
     ui = new BottomBar({bottomBar: loader[i % 4]});
     setInterval(function () {
@@ -96,7 +122,7 @@ function generateUsecaseFile(directory, usecase, details, callback){
                 ,(details && !details.crud)? "":
                 (directory === 'CONTROLLER') ? controller_template.template(util.capitalizeTitleCase(usecase)) :
                 (directory === 'SERVICE'? service_template.template(util.capitalizeTitleCase(usecase), details.description) :
-                (directory === 'ROUTE')? route_template.template(util.capitalizeTitleCase(usecase), util.useCaseNamingStandard(usecase), details.section) :
+                (directory === 'ROUTE')? route_template.template(util.capitalizeTitleCase(usecase), util.useCaseNamingStandard(usecase), details.section, details.path.toLowerCase()) :
                 ""),
 
                 (err) => {
@@ -142,7 +168,6 @@ program
                     type : 'checkbox',
                     name : 'section_option',
                     message : function(){
-
                         return  "Choose the section under which the usecase falls\n";
                     },
                     choices : section_choices,
@@ -174,7 +199,9 @@ program
                         })
                     }else{
 
+
                         prompt(question_is_usecase).then(phase_two_answers =>{
+                            //return console.log("The data received is :",JSON.stringify(answers));
                             //TODO : Make sure we add the files being generated in the Section's directory
                             async.waterfall([
                                 function generateControllerFile(cb){
@@ -203,17 +230,37 @@ program
 
                                     generateUsecaseFile('ROUTE', answers.usecase, {
                                         section : answers.section_option[0].toLowerCase(),
-                                        crud : phase_two_answers.crud
+                                        crud : phase_two_answers.crud,
+                                        path : phase_two_answers.path
                                     }, function(err, result){
                                         if(err) return cb(err);
                                         cb(null);
                                     })
+                                },
+                                function registerApi(cb){
+
+                                    if(!phase_two_answers.api_path_register) return cb(null)
+                                    var section_api_path_option = []
+                                    _.forEach(section_choices, function(item){
+
+                                        var index = _.findIndex(answers.section_option, function(section_option) { return section_option == item.name; });
+                                        if(index!== -1) section_api_path_option.push(item.id)
+
+                                    })
+
+                                    var register_api_object = {
+                                        path : phase_two_answers.path,
+                                        section_option : section_api_path_option
+                                    }
+                                    registerApiPath(register_api_object, cb)
+
                                 }
                             ], function(err, result){
                                 if(err) console.error("Error occured due to : ", err);
                                 console.log("Usecase has been generated successfully!!!");
                                 process.exit();
                             });
+
                         })
                     }
 
@@ -231,7 +278,7 @@ program
 program
     .command('addapiroute')
     .alias('addaroute')
-    .description('Adds a admin api in the system and associates the same with multiple admin sections')
+    .description('Adds a admin api in the system and associates the same with multiple admin sections\n')
     .action(() => {
 
         fetchSectionData(true, function(err, data) {
@@ -270,19 +317,14 @@ program
                         process.exit();
                     }else{
 
-                        dao.create({
-                            fk_section_id: answers.section_option[0],
-                            path: answers.path,
-                            fk_section_id_v1 : answers.section_option,
-                            active: true
-                        }, 'admin_api', function(err, data){
+                        registerApiPath(answers, function(err, data){
 
                             ui.updateBottomBar("");
                             if(err) console.error("Error occured due to : ", err);
                             else console.log("Api route has been registered in the system as :", answers.path);
                             process.exit();
 
-                        })
+                        });
 
                     }
 
@@ -292,3 +334,4 @@ program
 
     });
 program.parse(process.argv);
+
