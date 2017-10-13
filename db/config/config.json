@@ -1,7 +1,7 @@
 {
   "development": {
-    "username": "numadic",
-    "password": "qwertyuiop123",
+    "username": "numadic_wad",
+    "password": "qwertyuiop1234",
     "database": "nu_core_master",
     "host": "nu-core-master.cpbd1zfurzzm.ap-southeast-1.rds.amazonaws.com",
     "dialect": "postgres",

@@ -11,6 +11,11 @@ exports.template = function(name, description){
                 "var async = require('async');\n" +
                 "var _ = require('lodash');\n\n" +
                 "exports.fetchAll" + name + " = function(limit, page, q, cfilter, callback){\n\n" +
+                        "\tlimit = limit || 10;\n" +
+                        "\tpage = page || 0;\n" +
+                        "\tq = q || null;\n" +
+                        "\tcfilter = cfilter || null;\n" +
+                        "\tvar offset = limit * page;\n" +
                         "\tvar query = \"\";\n" +
                         "\tdao.rawDbQuery(query, function(err, data){\n" +
                                 "\t\tif(err){\n" +
