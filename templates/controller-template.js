@@ -10,63 +10,63 @@ exports.template = function(name){
             "var " + name + "Service = require('../../../services/"+ util.useCaseNamingStandard(name)+"-service');\n\n" +
 
             "exports.fetch" + name + "= function(req, res){\n"+
-              "if(req.query.id){\n "+
-                name + "Service.fetch" + name + "(req.query.id, function(err, result){\n "+
-                  "if(err) return res.status(err.code).send(err.message);\n "+
-                  "res.send(result);\n "+
-                "});\n "+
-              "}else{\n "+
-                name + "Service.fetchAll" + name + "(req.query.limit, req.query.page, req.query.q, req.query.cfilter, function(err, result){\n "+
-                  "if(err) return res.status(err.code).send(err.message);\n "+
-                  "res.send(result);\n "+
-                "});\n "+
-              "}\n "+
+              "\tif(req.query.id){\n "+
+                "\t\t"+name + "Service.fetch" + name + "(req.query.id, function(err, result){\n "+
+                  "\t\t\tif(err) return res.status(err.code).send(err.message);\n "+
+                  "\t\t\tres.send(result);\n "+
+                "\t\t});\n "+
+              "\t}else{\n "+
+                "\t\t"+name + "Service.fetchAll" + name + "(req.query.limit, req.query.page, req.query.q, req.query.cfilter, function(err, result){\n "+
+                  "\t\t\tif(err) return res.status(err.code).send(err.message);\n "+
+                  "\t\t\tres.send(result);\n "+
+                "\t\t});\n "+
+              "\t}\n "+
             "};\n\n" +
 
             "exports.create" + name + " = function(req, res){\n"+
-              "var data = req.body;\n "+
-              "var keys = [];\n"+
-              "var ifDataValid = _customloadsh.validateMinPayload(keys, data);\n"+
-              "if(!ifDataValid){\n"+
-                  "res.status(message.code.badRequest).send(message.error.badRequest);\n"+
-              "}else{\n"+
-              name + "Service.create" + name + "(data, function(err, result){\n "+
-                "if(err)  {\n "+
-                  "res.status(err.code).send(err.message);\n "+
-                  "return;\n "+
-                "}\n "+
-                "res.send(result);\n "+
-              "});\n "+
-              "}\n "+
+              "\tvar data = req.body;\n "+
+              "\tvar keys = [];\n"+
+              "\tvar ifDataValid = _customloadsh.validateMinPayload(keys, data);\n"+
+              "\tif(!ifDataValid){\n"+
+                "\t\tres.status(message.code.badRequest).send(message.error.badRequest);\n"+
+              "\t}else{\n"+
+                "\t\t"+name + "Service.create" + name + "(data, function(err, result){\n "+
+                  "\t\t\tif(err)  {\n "+
+                    "\t\t\t\tres.status(err.code).send(err.message);\n "+
+                    "\t\t\t\treturn;\n "+
+                  "\t\t\t}\n "+
+                  "\t\t\tres.send(result);\n "+
+                "\t\t});\n "+
+              "\t}\n "+
             "};\n\n" +
 
             "exports.update" + name + " = function(req, res){\n"+
-              "var id  = req.query.id;\n "+
-              "var data = req.body;\n "+
-              "var keys = [];\n"+
-              "var ifDataValid = _customloadsh.validateMinPayload(keys, data);\n"+
-              "if(!ifDataValid){\n"+
-                  "res.status(message.code.badRequest).send(message.error.badRequest);\n"+
-              "}else{\n"+
-              name + "Service.update" + name + "(id, data, function(err, result){\n "+
-                "if(err) {\n "+
-                  "res.status(err.code).send(err.message);\n "+
-                  "return;\n "+
-                "}\n "+
-                "res.send(result);\n "+
-              "});\n "+
-              "}\n "+
+              "\tvar id  = req.query.id;\n "+
+              "\tvar data = req.body;\n "+
+              "\tvar keys = [];\n"+
+              "\tvar ifDataValid = _customloadsh.validateMinPayload(keys, data);\n"+
+              "\tif(!ifDataValid){\n"+
+                "\t\tres.status(message.code.badRequest).send(message.error.badRequest);\n"+
+              "\t}else{\n"+
+                "\t\t"+name + "Service.update" + name + "(id, data, function(err, result){\n "+
+                  "\t\t\tif(err) {\n "+
+                    "\t\t\t\tres.status(err.code).send(err.message);\n "+
+                    "\t\t\t\treturn;\n "+
+                  "\t\t\t}\n "+
+                  "\t\t\tres.send(result);\n "+
+                "\t\t});\n "+
+              "\t}\n "+
             "};\n\n" +
 
             "exports.delete" + name + " = function(req, res){\n"+
-              "var id  = req.query.id;\n"+
-              name + "Service.delete" + name + "(id, function(err, result){\n"+
-                "if(err) {\n "+
-                  "res.status(err.code).send(err.message);\n "+
-                  "return;\n "+
-                "}\n "+
-                "res.send(result);\n "+
-              "});\n "+
+              "\tvar id  = req.query.id;\n"+
+              "\t"+name + "Service.delete" + name + "(id, function(err, result){\n"+
+                "\t\tif(err) {\n "+
+                  "\t\t\tres.status(err.code).send(err.message);\n "+
+                  "\t\t\treturn;\n "+
+                "\t\t}\n "+
+                "\t\tres.send(result);\n "+
+              "\t});\n "+
             "};\n\n" ;
     
 };
