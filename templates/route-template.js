@@ -44,11 +44,11 @@ exports.template = function(name, controller_name, section){
             "  *         in: query\n" +
             "  *         type: integer\n" +
             "  *         required: false\n" +
-            "  *       - name: id\n " +
-            "  *         description: " + name + " id\n " +
-            "  *         in: query\n " +
-            "  *         type: integer\n " +
-            "  *         required: false\n " +
+            "  *       - name: id\n" +
+            "  *         description: " + name + " id\n" +
+            "  *         in: query\n" +
+            "  *         type: integer\n" +
+            "  *         required: false\n" +
             "  *     responses:\n" +
             "  *       200:\n" +
             "  *         description: " + name + " data in JSON\n" +
@@ -105,11 +105,11 @@ exports.template = function(name, controller_name, section){
             "  *         name: Authorization\n" +
             "  *         type: string\n" +
             "  *         required: true\n" +
-            "  *       - name: id\n " +
-            "  *         description: " + name + " id\n " +
-            "  *         in: query\n " +
-            "  *         type: integer\n " +
-            "  *         required: true\n " +
+            "  *       - name: id\n" +
+            "  *         description: " + name + " id\n" +
+            "  *         in: query\n" +
+            "  *         type: integer\n" +
+            "  *         required: true\n" +
             "  *       - name: " + name + "\n" +
             "  *         description: " + name + " to be updated\n" +
             "  *         in: body\n" +
@@ -127,36 +127,36 @@ exports.template = function(name, controller_name, section){
             "  */\n" +
             " router.put('/', " + name.toLowerCase() + ".update" + name + ");\n" +
 
-            "  /**\n " +
-            "  * @swagger\n " +
-            "  * /" + name.toLowerCase() + ":\n " +
-            "  *   delete:\n " +
-            "  *     tags:\n " +
-            "  *       - " + name + " APIs\n " +
-            "  *     summary : Disable a " + name + "\n " +
-            "  *     description : Disable a " + name + "\n " +
-            "  *     produces:\n " +
-            "  *       - application/json\n " +
-            "  *     parameters:\n " +
-            "  *       - in: header\n " +
-            "  *         name: Authorization\n " +
-            "  *         type: string\n " +
-            "  *         required: true\n " +
-            "  *       - name: id\n " +
-            "  *         description: " + name + " id\n " +
-            "  *         in: query\n " +
-            "  *         type: integer\n " +
-            "  *         required: true\n " +
-            "  *     responses:\n " +
-            "  *       200:\n " +
-            "  *         description: " + name + " disabled successfully\n " +
-            "  *       400:\n " +
-            "  *         description: Bad Request\n " +
-            "  *       500:\n " +
-            "  *         description: Internal Server Error\n " +
-            "  *\n " +
-            "  */\n " +
-            "  router.delete('/', " + name.toLowerCase() + ".delete" + name + ");\n " +
+            "  /**\n" +
+            "  * @swagger\n" +
+            "  * /" + name.toLowerCase() + ":\n" +
+            "  *   delete:\n" +
+            "  *     tags:\n" +
+            "  *       - " + name + " APIs\n" +
+            "  *     summary : Disable a " + name + "\n" +
+            "  *     description : Disable a " + name + "\n" +
+            "  *     produces:\n" +
+            "  *       - application/json\n" +
+            "  *     parameters:\n" +
+            "  *       - in: header\n" +
+            "  *         name: Authorization\n" +
+            "  *         type: string\n" +
+            "  *         required: true\n" +
+            "  *       - name: id\n" +
+            "  *         description: " + name + " id\n" +
+            "  *         in: query\n" +
+            "  *         type: integer\n" +
+            "  *         required: true\n" +
+            "  *     responses:\n" +
+            "  *       200:\n" +
+            "  *         description: " + name + " disabled successfully\n" +
+            "  *       400:\n" +
+            "  *         description: Bad Request\n" +
+            "  *       500:\n" +
+            "  *         description: Internal Server Error\n" +
+            "  *\n" +
+            "  */\n" +
+            "  router.delete('/', " + name.toLowerCase() + ".delete" + name + ");\n" +
 
             " \nmodule.exports = router;";
     

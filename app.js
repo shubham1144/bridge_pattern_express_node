@@ -61,12 +61,12 @@ function generateUsecaseFile(directory, usecase, details, callback){
         //synchronous wait to make sure the directory exists before we proceed with the file creation
          if (!exists) fs.mkdirSync(process.cwd() + '/' + directories[directory].name + '/' );
 
-        fs.exists(process.cwd() + '/'+ directories[directory].name +'/wad-section/' + details.section.toLowerCase() + '/', (exists) => {
+        fs.exists(process.cwd() + '/'+ directories[directory].name +'/' + details.section.toLowerCase() + '/', (exists) => {
 
-            if (!exists && directory!== 'SERVICE') fs.mkdirSync(process.cwd() + '/' + directories[directory].name + '/wad-section/' + details.section.toLowerCase() + '/');
+            if (!exists && directory!== 'SERVICE') fs.mkdirSync(process.cwd() + '/' + directories[directory].name + '/' + details.section.toLowerCase() + '/');
             //Step 1 : Generate the file as required and populate the contents of the file based on the directory
             fs.writeFile(
-                directory!== 'SERVICE'?process.cwd() + '/' + directories[directory].name + '/wad-section/' + details.section.toLowerCase() + '/' + util.useCaseNamingStandard(usecase) + directories[directory]['suffix']
+                directory!== 'SERVICE'?process.cwd() + '/' + directories[directory].name + '/' + details.section.toLowerCase() + '/' + util.useCaseNamingStandard(usecase) + directories[directory]['suffix']
                 : process.cwd() + '/' + directories[directory].name + '/' + util.useCaseNamingStandard(usecase) + directories[directory]['suffix']
                 ,(details && !details.crud)? "":
                 (directory === 'CONTROLLER') ? controller_template.template(util.capitalizeTitleCase(usecase)) :
