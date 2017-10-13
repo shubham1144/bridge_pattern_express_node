@@ -5,7 +5,7 @@ exports.template = function(name, controller_name, section, path){
     return  "var express = require('express');\n" +
             "var router = express.Router();\n" +
             "var " + name.toLowerCase() + " = require('../../../controllers/wad-section/" + section + '/' + controller_name + "-controller');\n\n" +
-            " /**\n" +
+            "/**\n" +
             " * @swagger\n" +
             " * definition:\n" +
             " *   " + name + ":\n" +
@@ -14,7 +14,7 @@ exports.template = function(name, controller_name, section, path){
             " *        type : integer\n" +
             " */\n" +
             " \n\n" +
-            " /**\n" +
+            "/**\n" +
             " * @swagger\n" +
             " * " + path + ":\n" +
             " *   get:\n" +
@@ -58,7 +58,7 @@ exports.template = function(name, controller_name, section, path){
             " */\n" +
             "router.get('/', " +  name.toLowerCase() + ".fetchAll" +  name + ");\n" +
             "\n" +
-            " /**\n" +
+            "/**\n" +
             " * @swagger\n" +
             " * " + path + ":\n" +
             " *   post:\n" +
@@ -90,7 +90,7 @@ exports.template = function(name, controller_name, section, path){
             " */\n" +
             "router.post('/', " + name.toLowerCase() + ".create" + name+ ");\n" +
             "\n" +
-            " /**\n" +
+            "/**\n" +
             " * @swagger\n" +
             " * " + path + ":\n" +
             " *   put:\n" +
@@ -126,7 +126,7 @@ exports.template = function(name, controller_name, section, path){
             " *\n" +
             " */\n" +
             "router.put('/', " + name.toLowerCase() + ".update" + name + ");\n" +
-            " /**\n" +
+            "/**\n" +
             " * @swagger\n" +
             " * " + path + ":\n" +
             " *   delete:\n" +
@@ -148,7 +148,7 @@ exports.template = function(name, controller_name, section, path){
             " *         required: true\n" +
             " *     responses:\n" +
             " *       200:\n" +
-            " *         description: " + name + " disabled successfully\n" +
+            " *         description: " + name + " deleted successfully\n" +
             " *       400:\n" +
             " *         description: Bad Request\n" +
             " *       500:\n" +
