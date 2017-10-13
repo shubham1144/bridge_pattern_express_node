@@ -6,7 +6,7 @@ exports.template = function(name){
             "var async = require('async');\n" +
             "var logger = require('../../../helpers/logger');\n" +
             "var util = require('../../../helpers/util');\n" +
-            "var message = require('../../../helpers/message.json');\n"
+            "var message = require('../../../helpers/message.json');\n"+
             "var " + name + "Service = require('../../../services/"+ util.useCaseNamingStandard(name)+"-service');\n\n" +
 
             "exports.fetch" + name + "= function(req, res){\n"+
