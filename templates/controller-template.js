@@ -10,7 +10,7 @@ exports.template = function(name){
             "var message = require('../../../helpers/message.json');\n"+
             "var " + util.camelCase(name) + "Service = require('../../../services/"+ util.useCaseNamingStandard(name)+"-service');\n\n" +
 
-            "exports.fetch" + name + "= function(req, res){\n\n"+
+            "exports.fetch" + name + " = function(req, res){\n\n"+
               "\tif(req.query.id){\n"+
                 "\t\t"+util.camelCase(name) + "Service.fetch" + name + "(req.query.id, function(err, result){\n"+
                   "\t\t\tif(err) return res.status(err.code).send(err.message);\n"+

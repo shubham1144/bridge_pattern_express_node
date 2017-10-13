@@ -36,7 +36,7 @@ exports.template = function(name, description){
                                 "\tcallback(null, data[0]);\n" +
                         "\t});\n"+
                 "\n};\n\n" +
-                "exports.add" + name + " = function(data, callback){\n\n" +
+                "exports.create" + name + " = function(data, callback){\n\n" +
                         "\tdao.create({}, util.MODEL_NAME.ENTER_USECASE_HERE, function(err, data){\n" +
                                 "\t\tif(err){\n" +
                                         "\t\t\tlogger.error(\"Error occured due to : \", err);\n" +
@@ -59,6 +59,18 @@ exports.template = function(name, description){
                                 "\t\t}\n" +
                                 "\t\tcallback(null, message.success.ENTER_USECASE_UPDATE_MESSAGE_HERE);\n" +
                         "\t})\n" +
+                "\n};\n\n" +
+                "exports.delete" + name + " = function(id, callback){\n\n" +
+                        "\tdao.updateById(util.MODEL_NAME.ENTER_USECASE_HERE, id, { active : false }, function(err, data){\n" +
+                        "\t\tif(err){\n" +
+                                "\t\t\tlogger.error(\"Error occured due to : \", err);\n" +
+                                "\t\t\treturn callback({\n" +
+                                "\t\t\t\tcode : err.code || message.code.internalServerError,\n" +
+                                "\t\t\t\tmessage : err.name || err.message || message.error.internalServerErr\n" +
+                                "\t\t\t})\n" +
+                        "\t\t}\n" +
+                        "\t\tcallback(null, message.success.ENTER_USECASE_DELETE_MESSAGE_HERE);\n" +
+                        "\t})\n" +
                 "\n};";
-        
+
 };
