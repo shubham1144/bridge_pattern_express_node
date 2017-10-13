@@ -56,7 +56,7 @@ exports.template = function(name, controller_name, section, path){
             " *         description: Internal Server Error\n" +
             " *\n" +
             " */\n" +
-            "router.get('/', " +  name.toLowerCase() + ".fetchAll" +  name + ");\n" +
+            "router.get('/', " +  name.toLowerCase() + ".fetch" +  name + ");\n" +
             "\n" +
             "/**\n" +
             " * @swagger\n" +
