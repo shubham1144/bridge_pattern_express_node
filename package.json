@@ -1,7 +1,7 @@
 {
   "name": "bridge-pattern-standard",
   "version": "1.3.3",
-  "description": "a standard cli interface to reduce the efforts required for development during the project WAD and introduce a standard into the WAD platform",
+  "description": "a standard cli interface to reduce the efforts required for development during the project",
   "main": "app.js",
   "preferGlobal": true,
   "bin": "./app.js",
